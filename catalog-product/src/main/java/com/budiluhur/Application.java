@@ -1,5 +1,6 @@
 package com.budiluhur;
 
+import com.budiluhur.servlet.CategoryServlet;
 import com.budiluhur.servlet.ProductServlet;
 
 import org.apache.catalina.Context;
@@ -11,39 +12,26 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
 
-        System.out.println(
-            "Menjalankan Embedded Tomcat Server..."
-        );
+        System.out.println("Menjalankan Embedded Tomcat Server...");
 
         Tomcat tomcat = new Tomcat();
-
         tomcat.setPort(8080);
-
         tomcat.getConnector();
 
-        Context ctx = tomcat.addContext(
-            "",
-            new File(".").getAbsolutePath()
-        );
+        Context ctx = tomcat.addContext("", new File(".").getAbsolutePath());
 
-        Tomcat.addServlet(
-            ctx,
-            "ProductServlet",
-            new ProductServlet()
-        );
+        // Servlet produk -> /products
+        Tomcat.addServlet(ctx, "ProductServlet", new ProductServlet());
+        ctx.addServletMappingDecoded("/products", "ProductServlet");
 
-        ctx.addServletMappingDecoded(
-            "/product",
-            "ProductServlet"
-        );
+        // Servlet kategori -> /categories
+        Tomcat.addServlet(ctx, "CategoryServlet", new CategoryServlet());
+        ctx.addServletMappingDecoded("/categories", "CategoryServlet");
 
-        System.out.println(
-            "Server berhasil berjalan di: " +
-            "http://localhost:8080/product"
-        );
+        System.out.println("Produk   : http://localhost:8080/products");
+        System.out.println("Kategori : http://localhost:8080/categories");
 
         tomcat.start();
-
         tomcat.getServer().await();
     }
 }
